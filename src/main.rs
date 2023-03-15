@@ -119,13 +119,13 @@ fn main() {
             if start_idx < 0 {
                 start_idx = (v.len() as i32) + start_idx;
                 if start_idx < 0 {
-                    return;
+                    continue;
                 }
             }
             if start_idx < v.len() as i32 {
                 println!("{}", v[start_idx as usize]);
             }
-            return;
+            continue;
         }
 
         if start_idx == std::i32::MAX {
@@ -133,7 +133,7 @@ fn main() {
             if end_idx < 0 {
                 end_idx = (v.len() as i32) + end_idx;
                 if end_idx < 0 {
-                    return;
+                    continue;
                 }
             }
         } else if end_idx == std::i32::MAX {
@@ -141,24 +141,24 @@ fn main() {
             if start_idx < 0 {
                 start_idx = (v.len() as i32) + start_idx;
                 if start_idx < 0 {
-                    return;
+                    continue;
                 }
             }
         } else {
             if start_idx < 0 {
                 start_idx = (v.len() as i32) + start_idx;
                 if start_idx < 0 {
-                    return;
+                    continue;
                 }
             }
             if end_idx < 0 {
                 end_idx = (v.len() as i32) + end_idx;
                 if end_idx < 0 {
-                    return;
+                    continue;
                 }
             }
             if start_idx > end_idx {
-                return;
+                continue;
             }
         }
         if start_idx < v.len() as i32 && end_idx < v.len() as i32 {
