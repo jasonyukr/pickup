@@ -34,65 +34,68 @@ fn parse_input_string(input_string: &str, quote_char: char, strip_quote_char: bo
 }
 
 fn print_usage() {
-    println!("{}", "Usage : pickup {-q} {-s} start:end");
-    println!("  -q   -> use single-quote character. note that double-quote is default.");
-    println!("  -s   -> strip the quote character in the output");
-    println!("start:end example");
-    println!("   0   -> first element only");
-    println!("   1   -> second element only");
-    println!("   -1  -> the last element only");
-    println!("   -2  -> the previous of last element only");
-    println!("   0:2 -> first, second and thrid elements");
-    println!("   1:  -> From the second to the last elements");
-    println!("   :3  -> first, second, third and 4th elements");
+    println!("{}", "Usage : pickup {-q} {-s} {-h} {start:end}");
+    println!("   -q   -> use single-quote character. note that double-quote is default.");
+    println!("   -s   -> strip the quote character in the output");
+    println!("   -h   -> show this help message");
+    println!(" start:end example");
+    println!("    0   -> first element only");
+    println!("    1   -> second element only");
+    println!("    -1  -> the last element only");
+    println!("    -2  -> the previous of last element only");
+    println!("    0:2 -> first, second and thrid elements");
+    println!("    1:  -> From the second to the last elements");
+    println!("    :3  -> first, second, third and 4th elements");
+    println!("        -> all elements if range is not specified");
 }
 
 fn main() {
     // parse argument
     let mut quote_char = '"';
     let mut strip_quote_char = false;
-    if env::args().len() < 2 {
-        print_usage();
-        return;
+    let mut arg_start_idx = 0;
+    let mut arg_end_idx = -1;
+    let mut args: Vec<String> = env::args().collect();
+    if !args.is_empty() {
+        args.remove(0);
     }
 
-    let mut start_idx = -1;
-    let mut end_idx = -1;
-
-    let args: Vec<String> = env::args().collect();
     for arg in args {
         if arg == "-q" {
             quote_char = '\'';
         } else if arg == "-s" {
             strip_quote_char = true;
+        } else if arg == "-h" {
+            print_usage();
+            return;
         } else {
             let parts: Vec<&str> = arg.split(':').collect();
             if parts.len() >= 2 {
                 match parts[0].parse::<i32>() {
                     Ok(integer) => {
-                        start_idx = integer;
+                        arg_start_idx = integer;
                     },
                     Err(_) => {
-                        start_idx = std::i32::MAX;
+                        arg_start_idx = std::i32::MAX;
                     }
                 }
                 match parts[1].parse::<i32>() {
                     Ok(integer) => {
-                        end_idx = integer;
+                        arg_end_idx = integer;
                     },
                     Err(_) => {
-                        end_idx = std::i32::MAX;
+                        arg_end_idx = std::i32::MAX;
                     }
                 }
             } else {
                 match arg.parse::<i32>() {
                     Ok(integer) => {
-                        start_idx = integer;
-                        end_idx = integer;
+                        arg_start_idx = integer;
+                        arg_end_idx = integer;
                     },
                     Err(_) => {
-                        start_idx = std::i32::MAX;
-                        end_idx = std::i32::MAX;
+                        arg_start_idx = std::i32::MAX;
+                        arg_end_idx = std::i32::MAX;
                     }
                 }
             }
@@ -109,11 +112,8 @@ fn main() {
 
         let v = parse_input_string(&line, quote_char, strip_quote_char);
 
-        // for i in 0..v.len() {
-        //     println!("|{}|", v[i]);
-        // }
-        // println!("--------------------");
-        // println!("start={} end={}", start_idx, end_idx);
+        let mut start_idx = arg_start_idx;
+        let mut end_idx = arg_end_idx;
 
         if start_idx == end_idx {
             if start_idx < 0 {
