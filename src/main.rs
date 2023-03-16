@@ -1,14 +1,14 @@
 use std::io::{self, BufRead};
 use std::env;
 
-fn parse_input_string(input_string: &str, quote_char: char, strip_quote_char: bool) -> Vec<String> {
+fn parse_input_string(input_string: &str, ignore_quote: bool, quote_char: char, strip_quote_char: bool) -> Vec<String> {
     let mut result = Vec::new();
     let mut start = 0;
     let mut end = 0;
     let mut in_quotes = false;
     let mut chars = input_string.chars();
     while let Some(c) = chars.next() {
-        if c == quote_char {
+        if !ignore_quote && c == quote_char {
             in_quotes = !in_quotes;
             if !in_quotes {
                 if strip_quote_char {
@@ -34,9 +34,10 @@ fn parse_input_string(input_string: &str, quote_char: char, strip_quote_char: bo
 }
 
 fn print_usage() {
-    println!("{}", "Usage : pickup {-q} {-s} {-h} {start:end}");
+    println!("{}", "Usage : pickup {-q} {-s} {-x} {-h} {start:end}");
     println!("   -q   -> use single-quote character. note that double-quote is default.");
     println!("   -s   -> strip the quote character in the output");
+    println!("   -x   -> ignore quote(signle/double) characters when parsing");
     println!("   -h   -> show this help message");
     println!(" start:end example");
     println!("    0   -> first element only");
@@ -51,6 +52,7 @@ fn print_usage() {
 
 fn main() {
     // parse argument
+    let mut ignore_quote = false;
     let mut quote_char = '"';
     let mut strip_quote_char = false;
     let mut arg_start_idx = 0;
@@ -65,6 +67,8 @@ fn main() {
             quote_char = '\'';
         } else if arg == "-s" {
             strip_quote_char = true;
+        } else if arg == "-x" {
+            ignore_quote = true;
         } else if arg == "-h" {
             print_usage();
             return;
@@ -110,7 +114,7 @@ fn main() {
             Err(_) => continue
         }
 
-        let v = parse_input_string(&line, quote_char, strip_quote_char);
+        let v = parse_input_string(&line, ignore_quote, quote_char, strip_quote_char);
 
         let mut start_idx = arg_start_idx;
         let mut end_idx = arg_end_idx;
