@@ -1,4 +1,4 @@
-use std::io::{self, BufRead};
+use std::io::{self, BufRead, BufWriter, Write};
 use std::env;
 use substring::Substring;
 
@@ -107,6 +107,9 @@ fn main() {
         }
     }
 
+    let stdout = io::stdout();
+    let mut out = BufWriter::new(stdout);
+
     let stdin = io::stdin();
     for ln in stdin.lock().lines() {
         let line;
@@ -128,7 +131,7 @@ fn main() {
                 }
             }
             if start_idx < v.len() as i32 {
-                println!("{}", v[start_idx as usize]);
+                writeln!(out, "{}", v[start_idx as usize]).unwrap();
             }
             continue;
         }
@@ -169,11 +172,12 @@ fn main() {
         if start_idx < v.len() as i32 && end_idx < v.len() as i32 {
             for i in start_idx..=end_idx {
                 if i != end_idx {
-                    print!("{} ", v[i as usize]);
+                    write!(out, "{} ", v[i as usize]).unwrap();
                 } else {
-                    println!("{}", v[i as usize]);
+                    writeln!(out, "{}", v[i as usize]).unwrap();
                 }
             }
         }
     }
+    out.flush().unwrap();
 }
